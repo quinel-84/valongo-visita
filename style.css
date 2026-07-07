@@ -1,0 +1,238 @@
+:root {
+    --bg: #f4f7ff;
+    --primary: #4f46e5;
+    --secondary: #0f766e;
+    --accent: #f59e0b;
+    --text: #1f2937;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
+    padding: 2rem 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav a {
+    color: var(--white);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.16);
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-2px);
+}
+
+main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem 2rem;
+}
+
+section {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+section h2 {
+    margin-top: 0;
+    color: var(--primary);
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--accent);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.28);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.gallery img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+    cursor: pointer;
+}
+
+body.home-page section {
+    border-top: 5px solid var(--accent);
+    text-align: center;
+}
+
+body.sobre-page section {
+    border-top: 5px solid var(--secondary);
+}
+
+body.galeria-page section {
+    border-top: 5px solid var(--primary);
+}
+
+@media (max-width: 600px) {
+    header {
+        padding: 1.5rem 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+    }
+}
+
+.home-pics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.home-pics img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+}
+
+/* Nova classe para esconder as fotos de forma limpa */
+.gallery img.escondido {
+    display: none !important;
+}
+
+/* Garante que o popup usa flexbox quando estiver ativo */
+.popup-overlay {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Adiciona esta classe para quando o popup deve abrir */
+.popup-overlay.ativo {
+    display: flex !important;
+}
+
+/* Estilo da imagem do popup */
+.popup-content {
+    max-width: 85%;
+    max-height: 85vh;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: zoomIn 0.25s ease;
+}
+
+/* Botão de Fechar (X) */
+.popup-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10000; /* Garante que o X fica por cima de tudo para receber o clique */
+}
+
+.popup-close:hover {
+    color: var(--accent);
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Estilo comum para as duas setas */
+.popup-prev, .popup-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 15px;
+    user-select: none;
+    transition: color 0.2s, background-color 0.2s;
+    border-radius: 5px;
+    z-index: 10000;
+}
+
+.popup-prev:hover, .popup-next:hover {
+    color: var(--accent);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Posicionamento individual */
+.popup-prev { left: 20px; }
+.popup-next { right: 20px; }
+
+/* Esconder as setas em ecrãs muito pequenos para não tapar a foto */
+@media (max-width: 600px) {
+    .popup-prev, .popup-next { font-size: 30px; padding: 8px; }
+    .popup-prev { left: 5px; }
+    .popup-next { right: 5px; }
+}

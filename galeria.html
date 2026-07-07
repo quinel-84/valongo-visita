@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="galeria-page">
+    <header>
+        <h1>Visita de Estudo</h1>
+        <nav>
+            <ul>
+                <a href="index.html">Home</a>
+                <a href="galeria.html">Galeria</a>
+                <a href="sobre.html">Sobre</a>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Galeria de Fotos</h2>
+            <p>Aqui estão algumas fotos da nossa visita de estudo.</p>
+            <div class="gallery" id="galleryContainer"></div>
+            <div class="btn-container" style="text-align: center; margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                <button id="btnVerMais" class="btn" style="border: none; cursor: pointer;">Ver Mais</button>
+                <button id="btnVerMenos" class="btn" style="border: none; cursor: pointer; display: none; background: #ef4444;">Ver Menos</button>
+            </div>
+        </section>
+    </main>
+    
+    <div id="imagePopup" class="popup-overlay">
+        <span class="popup-close">&times;</span>
+        <img class="popup-content" id="popupImg" src="" alt="Foto Ampliada">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // ---- CONFIGURAÇÕES ----
+    const pastaFotos = "fotos/"; 
+    const fotosExibirInicial = 6;
+    const fotosPorClique = 3;
+
+    const arquivosFotos = [
+        "A.jpg", "B.jpg", "C.jpg", "D.jpg", "E.jpg", "F.jpg", "G.jpg", "H.jpg",
+        "I.jpg", "J.jpg", "K.jpg", "L.jpg", "M.jpg", "N.jpg", "O.jpg", "P.jpg",
+        "Q.jpg", "R.jpg", "S.jpg", "T.jpg", "U.jpg", "V.jpg", "W.jpg", "X.jpg",
+        "Y.jpg", "Z.jpg", "ZA.jpg", "ZB.png", "ZC.png", "ZD.png"
+    ];
+
+    const galleryContainer = document.getElementById('galleryContainer');
+    const btnVerMais = document.getElementById('btnVerMais');
+    const btnVerMenos = document.getElementById('btnVerMenos'); 
+
+    // Elementos do Popup
+    const popup = document.getElementById('imagePopup');
+    const popupImg = document.getElementById('popupImg');
+    const popupClose = document.querySelector('.popup-close');
+    
+    // Criação dinâmica das setas dentro do popup se não existirem no HTML
+    let btnPrev = document.querySelector('.popup-prev');
+    let btnNext = document.querySelector('.popup-next');
+    
+    if (popup && !btnPrev) {
+        btnPrev = document.createElement('span');
+        btnPrev.className = 'popup-prev';
+        btnPrev.innerHTML = '&#10094;'; // Seta esquerda ❮
+        popup.appendChild(btnPrev);
+    }
+    if (popup && !btnNext) {
+        btnNext = document.createElement('span');
+        btnNext.className = 'popup-next';
+        btnNext.innerHTML = '&#10095;'; // Seta direita ❯
+        popup.appendChild(btnNext);
+    }
+
+    let fotoAtualIndex = 0;
+
+    // 1. Cria as tags <img> diretamente dentro da .gallery
+    arquivosFotos.forEach((nomeArquivo, index) => {
+        const img = document.createElement('img');
+        img.src = `${pastaFotos}${nomeArquivo}`; 
+        img.alt = "Foto da Visita de Estudo";
+        img.loading = "lazy";
+        img.classList.add('escondido'); 
+        
+        // Evento para abrir o Popup ao clicar na imagem
+        img.addEventListener('click', function () {
+            fotoAtualIndex = index;
+            abrirPopup(this.src);
+        });
+        
+        galleryContainer.appendChild(img);
+    });
+
+    const fotos = galleryContainer.querySelectorAll('img');
+    let fotosVisiveis = fotosExibirInicial;
+
+    // Função auxiliar para abrir o popup
+    function abrirPopup(src) {
+        popupImg.src = src;
+        popup.classList.add('ativo');
+        atualizarSetas();
+    }
+
+    // Esconde as setas se chegarmos aos limites das fotos visíveis
+    function atualizarSetas() {
+        if (fotoAtualIndex === 0) {
+            btnPrev.style.display = 'none';
+        } else {
+            btnPrev.style.display = 'block';
+        }
+
+        if (fotoAtualIndex === fotosVisiveis - 1 || fotoAtualIndex === fotos.length - 1) {
+            btnNext.style.display = 'none';
+        } else {
+            btnNext.style.display = 'block';
+        }
+    }
+
+    // Funções de Navegação
+    function fotoAnterior() {
+        if (fotoAtualIndex > 0) {
+            fotoAtualIndex--;
+            popupImg.src = fotos[fotoAtualIndex].src;
+            atualizarSetas();
+        }
+    }
+
+    function fotoSeguinte() {
+        if (fotoAtualIndex < fotosVisiveis - 1 && fotoAtualIndex < fotos.length - 1) {
+            fotoAtualIndex++;
+            popupImg.src = fotos[fotoAtualIndex].src;
+            atualizarSetas();
+        }
+    }
+
+    // 2. Lógica para controlar o estado da galeria
+    function renderizarGaleria() {
+        fotos.forEach((img, index) => {
+            if (index < fotosVisiveis) {
+                img.classList.remove('escondido'); 
+            } else {
+                img.classList.add('escondido');    
+            }
+        });
+
+        if (fotosVisiveis >= fotos.length) {
+            if (btnVerMais) btnVerMais.style.display = 'none';
+            if (btnVerMenos) btnVerMenos.style.display = 'block';
+        } else {
+            if (btnVerMais) btnVerMais.style.display = 'block';
+            if (btnVerMenos) btnVerMenos.style.display = 'none';
+        }
+    }
+
+    // Eventos dos botões da galeria
+    if (btnVerMais) {
+        btnVerMais.addEventListener('click', function () {
+            fotosVisiveis += fotosPorClique;
+            renderizarGaleria();
+        });
+    }
+
+    if (btnVerMenos) {
+        btnVerMenos.addEventListener('click', function () {
+            fotosVisiveis = fotosExibirInicial;
+            renderizarGaleria();
+            galleryContainer.scrollIntoView({ behavior: 'smooth' }); 
+        });
+    }
+
+    // Eventos de Clique nas Setas
+    if (btnPrev) btnPrev.addEventListener('click', (e) => { e.stopPropagation(); fotoAnterior(); });
+    if (btnNext) btnNext.addEventListener('click', (e) => { e.stopPropagation(); fotoSeguinte(); });
+
+    // 3. Funções para FECHAR o Popup
+    if (popup) {
+        if (popupClose) {
+            popupClose.addEventListener('click', function() {
+                popup.classList.remove('ativo');
+            });
+        }
+
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup || e.target === popupClose) {
+                popup.classList.remove('ativo');
+            }
+        });
+        
+        // Controlos de Teclado (ESC, Seta Esquerda, Seta Direita)
+        document.addEventListener('keydown', function(e) {
+            if (!popup.classList.contains('ativo')) return;
+            
+            if (e.key === "Escape") {
+                popup.classList.remove('ativo');
+            } else if (e.key === "ArrowLeft") {
+                fotoAnterior();
+            } else if (e.key === "ArrowRight") {
+                fotoSeguinte();
+            }
+        });
+    }
+
+    renderizarGaleria();
+});
+</script>
